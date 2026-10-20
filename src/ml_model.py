@@ -35,6 +35,7 @@ DUA KEPUTUSAN DESAIN
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -73,6 +74,12 @@ FITUR_KATEGORIK = [
     "cicilan_lain", "status_rumah", "jenis_pekerjaan", "telepon", "pekerja_asing",
 ]
 SEMUA_FITUR = FITUR_NUMERIK + FITUR_KATEGORIK
+
+# Jumlah proses ditetapkan eksplisit, bukan -1. Pada Windows, nilai -1
+# memaksa joblib menghitung jumlah inti fisik lewat pemanggilan proses luar
+# yang kerap gagal dan memunculkan peringatan WinError 2. Menyebut angkanya
+# langsung membuat langkah itu tidak diperlukan.
+N_JOBS = max(1, (os.cpu_count() or 2) - 1)
 
 
 # --------------------------------------------------------------------------
@@ -144,7 +151,7 @@ def kandidat_model() -> dict[str, Pipeline]:
             ("clf", RandomForestClassifier(
                 n_estimators=500, max_depth=12, min_samples_leaf=8,
                 max_features="sqrt", class_weight="balanced",
-                random_state=cfg.RANDOM_STATE, n_jobs=-1)),
+                random_state=cfg.RANDOM_STATE, n_jobs=N_JOBS)),
         ]),
         "HistGradientBoosting": Pipeline([
             ("prep", _prapemrosesan()),

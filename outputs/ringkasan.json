@@ -1,5 +1,5 @@
 {
-  "waktu_jalan": "2026-10-20T07:04:22",
+  "waktu_jalan": "2026-10-20T14:39:27",
   "checksum_sumber": "8e2c6d456b3cda1f273bfbbbd73ece6c",
   "etl": {
     "baris_awal": 1000,
@@ -24,7 +24,7 @@
     "akurasi": 0.6466666666666666,
     "presisi": 0.45121951219512196,
     "recall": 0.8222222222222222,
-    "f1": 0.5826771653543307,
+    "f1": 0.5826771653543308,
     "biaya": 170.0,
     "biaya_pada_05": 190.0,
     "biaya_loloskan_semua": 450.0,
@@ -42,9 +42,9 @@
       "C5": 0.284243,
       "C6": 0.05685
     },
-    "lambda_max": 6.022021654474031,
-    "ci": 0.004404330894806208,
-    "cr": 0.003551879753875974,
+    "lambda_max": 6.022021654474035,
+    "ci": 0.004404330894806918,
+    "cr": 0.003551879753876547,
     "konsisten": true
   },
   "periode": {
@@ -57,7 +57,7 @@
       "DITUNDA": 16,
       "DITOLAK": 6
     },
-    "korelasi_iks_pd": -0.07652112398905016
+    "korelasi_iks_pd": -0.07652112398905012
   },
   "korelasi_metode": {
     "rank_TOPSIS": {
@@ -135,8 +135,8 @@
   },
   "what_if": {
     "id_pemohon": "P0039",
-    "skor_sebelum": 0.4968780735851227,
-    "skor_sesudah": 0.5591418071569658,
+    "skor_sebelum": 0.49687807358512276,
+    "skor_sesudah": 0.559141807156966,
     "peringkat_sebelum": 15,
     "peringkat_sesudah": 8,
     "delta_peringkat": 7,
@@ -145,7 +145,7 @@
   "goal_seeking": {
     "id_pemohon": "P0039",
     "kriteria": "C5",
-    "nilai_awal": 0.3856055617633905,
+    "nilai_awal": 0.38560556176339045,
     "nilai_dibutuhkan": null,
     "selisih": null,
     "peringkat_target": 5,

@@ -38,6 +38,18 @@ from src import config as cfg                      # noqa: E402
 from src import evaluasi, knowledge, ml_model, pipeline, sensitivity  # noqa: E402
 from src.mcdm import ahp, ranking                  # noqa: E402
 
+def rupiah(nilai: float, singkat: bool = False) -> str:
+    """
+    Format nilai rupiah secara seragam di seluruh antarmuka.
+
+    Dibuat terpusat untuk menutup temuan HE-09, yaitu pemisah ribuan yang
+    berbeda antartab karena sebagian memakai format bawaan Python.
+    """
+    if singkat and abs(nilai) >= 1_000_000:
+        return f"Rp{nilai / 1_000_000:,.1f} jt".replace(",", ".")
+    return f"Rp{nilai:,.0f}".replace(",", ".")
+
+
 st.set_page_config(
     page_title="SPK Prioritisasi Kredit Mikro",
     page_icon="📊",
@@ -79,11 +91,22 @@ def hitung_ulang(konteks: dict, bobot: np.ndarray, metode: str) -> pd.DataFrame:
 def gambar_sidebar(bobot_ahp: np.ndarray) -> dict:
     st.sidebar.header("Parameter Keputusan")
 
+    # Batas DITURUNKAN dari konfigurasi, tidak ditulis tangan. Versi
+    # sebelumnya memakai batas skala Deutsche Mark yang tertinggal saat
+    # satuan diubah ke Rupiah, sehingga nilai bawaan Rp60 juta melampaui
+    # batas atas Rp200 ribu dan aplikasi gagal dijalankan. Menurunkan batas
+    # dari sumber yang sama membuat kesalahan semacam itu tidak bisa terulang.
+    plafon_awal = int(cfg.PLAFON_PERIODE)
+    langkah = max(1, 10 ** (len(str(plafon_awal)) - 3))   # 2 digit pertama
     plafon = st.sidebar.number_input(
-        "Plafon periode (DM)",
-        min_value=10_000, max_value=200_000,
-        value=int(cfg.PLAFON_PERIODE), step=5_000,
+        "Plafon periode (Rp)",
+        min_value=int(plafon_awal * 0.1),
+        max_value=int(plafon_awal * 5),
+        value=plafon_awal,
+        step=langkah,
+        help=f"Nilai bawaan {rupiah(plafon_awal)} berasal dari config.PLAFON_PERIODE.",
     )
+    st.sidebar.caption(f"Plafon aktif: {rupiah(plafon)}")
     pd_batas = st.sidebar.slider(
         "Batas keras PD", 0.30, 0.95, float(cfg.PD_HARD_LIMIT), 0.01,
         help="Pemohon dengan PD di atas nilai ini ditolak berapa pun peringkatnya.",
@@ -132,7 +155,10 @@ def gambar_sidebar(bobot_ahp: np.ndarray) -> dict:
     )
 
     # Perbaikan temuan HE-08 (keparahan 4): mode evaluasi dinyatakan eksplisit.
-    mode_evaluasi = st.sidebar.toggle(
+    # st.toggle baru tersedia sejak Streamlit 1.26. checkbox dipakai sebagai
+    # cadangan agar aplikasi tetap berjalan pada pemasangan yang lebih lama.
+    sakelar = getattr(st.sidebar, "toggle", st.sidebar.checkbox)
+    mode_evaluasi = sakelar(
         "Mode evaluasi", value=True,
         help="Menampilkan tingkat gagal bayar sebenarnya. Hanya mungkin pada "
              "data uji berlabel. Pada penyaluran nyata, angka ini belum ada "
@@ -152,7 +178,7 @@ def tab_keputusan(df_keputusan: pd.DataFrame, par: dict) -> None:
     k1.metric("Disetujui", len(disetujui))
     k2.metric(
         "Dana tersalur",
-        f"{df_keputusan['nominal_disetujui'].sum():,.0f}",
+        rupiah(df_keputusan["nominal_disetujui"].sum(), singkat=True),
         f"{df_keputusan['nominal_disetujui'].sum() / par['plafon'] * 100:.1f}% plafon",
     )
     k3.metric(
@@ -197,13 +223,13 @@ def tab_keputusan(df_keputusan: pd.DataFrame, par: dict) -> None:
     st.dataframe(
         tampil[[
             "rank_TOPSIS", "id_pemohon", "skor", "iks_skor", "kapasitas_angsur",
-            "skor_riwayat", "skor_produktif", "pd_model", "jumlah_kredit",
+            "skor_riwayat", "skor_produktif", "pd_model", "nilai_pengajuan_rp",
             "status_keputusan", "alasan",
         ]].rename(columns={
             "rank_TOPSIS": "Peringkat", "id_pemohon": "ID", "skor": "Skor",
             "iks_skor": "C1 IKS", "kapasitas_angsur": "C2 Kapasitas",
             "skor_riwayat": "C3 Riwayat", "skor_produktif": "C4 Produktif",
-            "pd_model": "C5 PD", "jumlah_kredit": "C6 Nilai",
+            "pd_model": "C5 PD", "nilai_pengajuan_rp": "C6 Nilai (Rp)",
             "status_keputusan": "Status", "alasan": "Alasan",
         }).sort_values("Peringkat"),
         use_container_width=True, hide_index=True, height=430,
@@ -211,7 +237,7 @@ def tab_keputusan(df_keputusan: pd.DataFrame, par: dict) -> None:
             "Skor": st.column_config.NumberColumn(format="%.4f"),
             "C5 PD": st.column_config.ProgressColumn(
                 format="%.3f", min_value=0.0, max_value=1.0),
-            "C6 Nilai": st.column_config.NumberColumn(format="%.0f"),
+            "C6 Nilai (Rp)": st.column_config.NumberColumn(format="%.0f"),
             "C2 Kapasitas": st.column_config.NumberColumn(format="%.1f"),
         },
     )
