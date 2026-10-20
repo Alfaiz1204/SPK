@@ -1,0 +1,250 @@
+
+======================================================================
+TAHAP 1  EKSTRAKSI DAN PEMBERSIHAN DATA
+======================================================================
+LAPORAN ETL
+============================================================
+Checksum sumber (MD5) : 8e2c6d456b3cda1f273bfbbbd73ece6c
+Baris awal            : 1,000
+Baris akhir           : 1,000
+Duplikat dibuang      : 0
+Nilai hilang          : tidak ada
+Kode tidak dikenal    : tidak ada
+Outlier di-winsorize  : {'jumlah_kredit': 20, 'durasi_bulan': 8}
+Distribusi label      : {'lancar': 700, 'macet': 300}
+
+======================================================================
+TAHAP 2  PELATIHAN MODEL PREDIKTIF
+======================================================================
+PERBANDINGAN KANDIDAT MODEL (validasi silang pada data latih)
+================================================================
+               model  cv_auc_mean  cv_auc_std  oof_auc_pr  oof_brier
+        RandomForest       0.7746      0.0376      0.5569     0.1900
+  LogisticRegression       0.7619      0.0281      0.5684     0.1968
+HistGradientBoosting       0.7534      0.0254      0.5433     0.1824
+
+EVALUASI MODEL PREDIKTIF
+================================================================
+Model terpilih        : RandomForest
+AUC validasi silang   : 0.7746 +/- 0.0376 (data latih)
+Ambang biaya-minimum  : 0.41 (dipilih out-of-fold)
+----------------------------------------------------------------
+HASIL PADA DATA UJI (dipakai sekali):
+  AUC-ROC             : 0.7895
+  AUC-PR              : 0.6413
+  Brier score         : 0.1855
+  Akurasi             : 0.6467
+  Presisi (macet)     : 0.4512
+  Recall  (macet)     : 0.8222
+  F1      (macet)     : 0.5827
+  Biaya total         : 170.0 unit
+  Biaya bila ambang .5: 190.0 unit
+  Biaya bila semua diloloskan: 450.0 unit
+
+======================================================================
+TAHAP 3  KALIBRASI BASIS PENGETAHUAN
+======================================================================
+Versi skor riwayat aktif : V2
+Peta pakar (V1)          : {'A34': 0, 'A33': 1, 'A32': 2, 'A31': 3, 'A30': 4}
+Peta kalibrasi (V2)      : {'A34': 4, 'A32': 3, 'A33': 2, 'A31': 1, 'A30': 0}
+
+Tingkat gagal bayar per kode riwayat (data latih):
+                  mean  count
+riwayat_kredit               
+A30             0.5714     28
+A31             0.5526     38
+A32             0.3177    362
+A33             0.3284     67
+A34             0.1756    205
+
+======================================================================
+TAHAP 4  BERKAS PENGAJUAN PERIODE BERJALAN
+======================================================================
+Jumlah pemohon      : 40
+Total diajukan      : Rp156,100,000
+Plafon tersedia     : Rp60,000,000
+Rasio permintaan    : 2.60x plafon
+
+Nilai pengajuan   : Rp1.050.000 sampai Rp14.650.000 (median Rp3.200.000)
+Pendapatan RT     : Rp1.600.000 sampai Rp4.700.000
+Angsuran bulanan  : Rp96.264 sampai Rp544.173
+Lolos batas 30%   : 40 dari 40 pemohon
+Di bawah garis kemiskinan (Rp596.676/kapita): 13 pemohon
+Status kesejahteraan: Menuju menengah 18. Miskin 13. Rentan miskin 9
+PD: min 0.128, median 0.385, maks 0.691
+
+Korelasi IKS vs gagal bayar (populasi) : +0.1540
+Korelasi IKS vs PD (periode ini)       : -0.0765
+Pertukaran NYARIS TIDAK MENGIKAT pada periode ini (|r| < 0,10), sehingga pemohon berkebutuhan tinggi dapat diprioritaskan tanpa tambahan risiko berarti. Kesimpulan ini berlaku untuk kohort ini saja dan wajib diperiksa ulang setiap periode.
+
+======================================================================
+TAHAP 5  PEMBOBOTAN KRITERIA (AHP KELOMPOK)
+======================================================================
+Agregasi 3 responden dengan rata-rata geometrik (Saaty AIJ):
+                          C1      C2      C3      C4      C5      C6      CR
+R1_Manajer            0.2982  0.1706  0.1053  0.0978  0.2714  0.0566  0.0077
+R2_Ketua              0.3665  0.1369  0.0812  0.1278  0.2321  0.0555  0.0122
+R3_Analis             0.2103  0.1875  0.1168  0.0830  0.3465  0.0560  0.0118
+GABUNGAN (geometrik)  0.2887  0.1666  0.1012  0.1025  0.2842  0.0568  0.0036
+
+BOBOT KRITERIA (AHP)
+====================================================
+  C1 Indeks Kebutuhan Sosial   0.2887  #################
+  C2 Kapasitas Angsur          0.1666  ##########
+  C3 Riwayat Kredit            0.1012  ######
+  C4 Dampak Produktif          0.1025  ######
+  C5 Probabilitas Gagal Bayar  0.2842  #################
+  C6 Nilai Pengajuan           0.0568  ###
+----------------------------------------------------
+  lambda_max = 6.0220
+  CI         = 0.0044
+  CR         = 0.0036  (ambang 0.1)
+  Status     = KONSISTEN
+
+======================================================================
+TAHAP 6  PEMERINGKATAN MULTIKRITERIA
+======================================================================
+Korelasi Spearman antar metode:
+             rank_TOPSIS  rank_SAW  rank_VIKOR
+rank_TOPSIS       1.0000    0.9572      0.8503
+rank_SAW          0.9572    1.0000      0.9403
+rank_VIKOR        0.8503    0.9403      1.0000
+
+Korelasi tinggi berarti peringkat tidak bergantung pada pilihan metode, sehingga hasil layak dipakai.
+
+======================================================================
+TAHAP 7  ALOKASI PLAFON
+======================================================================
+Status keputusan    : {'DISETUJUI': 18, 'DITUNDA': 16, 'DITOLAK': 6}
+Total dicairkan     : Rp59,350,000 (98.9% plafon)
+PD rata-rata disetujui  : 0.2714
+IKS rata-rata disetujui : 5.39
+PD rata-rata semua      : 0.3985
+IKS rata-rata semua     : 4.97
+Tingkat macet aktual pada yang disetujui : 0.0000 (vs 0.2500 pada seluruh pemohon)
+
+10 peringkat teratas:
+ rank_TOPSIS id_pemohon  skor_TOPSIS  iks_skor  pd_model  nilai_pengajuan_rp status_keputusan
+           1      P0373       0.7982         8    0.3023           3150000.0        DISETUJUI
+           2      P0023       0.7650         7    0.3264           3250000.0        DISETUJUI
+           3      P0716       0.7444         5    0.1916           7750000.0        DISETUJUI
+           4      P0437       0.6920         6    0.2646           1050000.0        DISETUJUI
+           5      P0727       0.6399         5    0.1469           2100000.0        DISETUJUI
+           6      P0278       0.6312         6    0.3813           1950000.0        DISETUJUI
+           7      P0576       0.6211         5    0.3257           3850000.0        DISETUJUI
+           8      P0672       0.5456         3    0.3547           6000000.0        DISETUJUI
+           9      P0545       0.5395         6    0.1502           1900000.0        DISETUJUI
+          10      P0260       0.5355         7    0.1521           1700000.0        DISETUJUI
+
+======================================================================
+TAHAP 7B  VALIDASI TERHADAP KEBIJAKAN ALTERNATIF
+======================================================================
+PERBANDINGAN KEBIJAKAN ALOKASI
+==============================================================================
+                                n_penerima  dana_terpakai  utilisasi  tingkat_macet  iks_rata2  pd_rata2  kerugian  penurunan_macet_vs_undian_%  selisih_iks_vs_undian
+kebijakan                                                                                                                                                             
+SPK Hybrid (AHP+TOPSIS)             18.000     59350000.0    98.9167         0.0000     5.3889    0.2714     0.000                        100.0                  0.362
+Hanya Risiko (PD terkecil)          18.000     59450000.0    99.0833         0.0556     5.2778    0.2526     5.000                         72.6                  0.251
+Hanya Kebutuhan (IKS terbesar)      20.000     59450000.0    99.0833         0.2000     5.9500    0.3238    20.000                          1.4                  0.923
+Siapa Cepat (FCFS)                  23.000     59800000.0    99.6667         0.2174     5.2174    0.3705    25.000                         -7.2                  0.190
+Undian (rata-rata 2000x)            19.066     59552425.0    99.2540         0.2028     5.0271    0.3567    19.345                          0.0                  0.000
+------------------------------------------------------------------------------
+SPK Hybrid menyalurkan dana kepada 18 pemohon (98.9% plafon terpakai).
+Tingkat gagal bayar penerima 0.0%, 100.0% lebih rendah daripada undian.
+Rata-rata IKS penerima 5.39, selisih +0.36 terhadap undian.
+
+Penurunan risiko: SPK MELAMPAUI kebijakan tujuan-tunggal (0.0000 vs 0.0556), bukan sekadar mendekatinya.
+Ketepatan sasaran: SPK menangkap 39.2% dari potensi perbaikan yang tersedia.
+
+Uji binomial satu sisi: 0 kasus macet dari 18 penerima, sementara seleksi acak diperkirakan menghasilkan 4.5 kasus. p = 0.0056 (signifikan pada taraf 5%).
+
+Aturan beban angsuran maksimum 30% pendapatan: 0 pemohon melanggar (rasio tertinggi 20.7%). Aturan ini TIDAK MENGIKAT pada kohort ini karena nilai pinjaman tergolong kecil terhadap pendapatan; aturan tetap dipertahankan sebagai penyaring untuk pengajuan bernilai besar.
+
+======================================================================
+TAHAP 7C  PEMBANDINGAN TERHADAP TOLOK UKUR TERBITAN
+======================================================================
+               Tolok ukur Tingkat macet                                        Sumber                            Keterangan
+ Sistem ini (periode uji)          0.0%                                Hasil pipeline  18 penerima, uji binomial p = 0,0056
+   Ambang sehat regulator            5% Surat Edaran Bank Indonesia No. 13/1/PBI/2011 Batas atas yang masih tergolong sehat
+Rata-rata KSP Jawa Tengah         6,89%                BPS Provinsi Jawa Tengah, 2020     56 dari 813 peminjam per koperasi
+     Segmen UMKM nasional         3,98%               Statistik perbankan, Maret 2024      Naik dari 3,71 persen akhir 2023
+
+Tolok ukur paling relevan adalah rata-rata KSP Jawa Tengah (6,89 persen), karena wilayahnya sama dengan kasus yang dimodelkan dan sudah melampaui ambang sehat regulator 5 persen.
+
+======================================================================
+TAHAP 7D  EVALUASI KEMUDAHAN PENGGUNAAN
+======================================================================
+EVALUASI HEURISTIK (NIELSEN)
+========================================================================
+Jumlah temuan        : 10
+Jumlah evaluator     : 3 (tim pengembang)
+Heuristik terlanggar : 9 dari 10 (H1, H10, H2, H3, H4, H5, H6, H7, H9)
+
+Sebaran keparahan:
+  4 Bencana, wajib diperbaiki sebelum rilis: 2
+  3 Mayor, prioritas tinggi: 4
+  2 Minor, prioritas rendah: 3
+  1 Kosmetik, perbaiki bila ada waktu: 1
+
+Wajib diperbaiki sebelum rilis : HE-03, HE-08
+Prioritas tinggi               : HE-01, HE-02, HE-06, HE-07
+Sudah ditindaklanjuti          : HE-01, HE-03, HE-08
+
+CATATAN BIAS: evaluator adalah pengembang sistem itu sendiri,
+sehingga masalah yang sudah terbiasa dihadapi cenderung terlewat.
+Temuan ini berstatus evaluasi awal, bukan pengganti pengujian
+dengan pengguna nyata.
+
+======================================================================
+TAHAP 8  ANALISIS SENSITIVITAS
+======================================================================
+Titik balik komposisi 10 besar saat bobot C1 bergeser: 9 kejadian
+ bobot_dari  bobot_ke masuk_n_besar keluar_n_besar
+      0.225     0.250         P0545          P0039
+      0.275     0.300         P0260          P0871
+      0.300     0.325         P0284          P0672
+      0.325     0.350         P0533          P0284
+      0.350     0.375         P0456          P0533
+      0.450     0.475         P0723          P0576
+      0.475     0.500         P0533          P0727
+      0.500     0.525         P0338          P0533
+
+Pemohon paling stabil di 10 besar (lintas skenario bobot C1):
+id_pemohon  jumlah_skenario  persen_stabilitas
+     P0023               23              100.0
+     P0278               23              100.0
+     P0437               23              100.0
+     P0373               23              100.0
+     P0716               20               87.0
+     P0727               18               78.3
+     P0576               17               73.9
+     P0545               15               65.2
+
+======================================================================
+TAHAP 9  WHAT-IF DAN GOAL SEEKING
+======================================================================
+WHAT-IF untuk P0039 (PD turun 40% karena ada penjamin):
+  id_pemohon                : P0039
+  skor_sebelum              : 0.4968780735851227
+  skor_sesudah              : 0.5591418071569658
+  peringkat_sebelum         : 15
+  peringkat_sesudah         : 8
+  delta_peringkat           : 7
+  alternatif_lain_bergeser  : 7
+
+GOAL SEEKING: berapa PD agar P0039 masuk peringkat 5?
+  id_pemohon                : P0039
+  kriteria                  : C5
+  nilai_awal                : 0.3856055617633905
+  nilai_dibutuhkan          : None
+  selisih                   : None
+  peringkat_target          : 5
+  peringkat_tercapai        : None
+  tercapai                  : False
+  catatan                   : Peringkat target tidak tercapai walau kriteria ini didorong ke nilai ekstrem. Kelemahan pemohon terletak pada kriteria lain.
+
+======================================================================
+TAHAP 10  PENYIMPANAN ARTEFAK
+======================================================================
+Artefak tersimpan di /home/claude/work/spk-kredit/outputs
+Riwayat keputusan di  /home/claude/work/spk-kredit/data/processed/spk.db

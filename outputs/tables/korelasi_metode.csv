@@ -1,0 +1,4 @@
+,rank_TOPSIS,rank_SAW,rank_VIKOR
+rank_TOPSIS,1.0,0.9572,0.8503
+rank_SAW,0.9572,1.0,0.9403
+rank_VIKOR,0.8503,0.9403,1.0

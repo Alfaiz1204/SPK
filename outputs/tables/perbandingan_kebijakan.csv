@@ -1,0 +1,6 @@
+kebijakan,n_penerima,dana_terpakai,utilisasi,tingkat_macet,iks_rata2,pd_rata2,kerugian,penurunan_macet_vs_undian_%,selisih_iks_vs_undian
+SPK Hybrid (AHP+TOPSIS),18.0,59350000.0,98.9167,0.0,5.3889,0.2714,0.0,100.0,0.362
+Hanya Risiko (PD terkecil),18.0,59450000.0,99.0833,0.0556,5.2778,0.2526,5.0,72.6,0.251
+Hanya Kebutuhan (IKS terbesar),20.0,59450000.0,99.0833,0.2,5.95,0.3238,20.0,1.4,0.923
+Siapa Cepat (FCFS),23.0,59800000.0,99.6667,0.2174,5.2174,0.3705,25.0,-7.2,0.19
+Undian (rata-rata 2000x),19.066,59552425.0,99.254,0.2028,5.0271,0.3567,19.345,0.0,0.0

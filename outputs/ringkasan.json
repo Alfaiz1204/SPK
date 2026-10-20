@@ -1,0 +1,252 @@
+{
+  "waktu_jalan": "2026-10-20T07:04:22",
+  "checksum_sumber": "8e2c6d456b3cda1f273bfbbbd73ece6c",
+  "etl": {
+    "baris_awal": 1000,
+    "baris_akhir": 1000,
+    "outlier_winsorize": {
+      "jumlah_kredit": 20,
+      "durasi_bulan": 8
+    },
+    "distribusi_label": {
+      "lancar": 700,
+      "macet": 300
+    }
+  },
+  "model": {
+    "terpilih": "RandomForest",
+    "cv_auc_mean": 0.7745869776482022,
+    "cv_auc_std": 0.03757943481071174,
+    "ambang": 0.41,
+    "auc": 0.7894708994708995,
+    "auc_pr": 0.6412508901789561,
+    "brier": 0.18549851297190909,
+    "akurasi": 0.6466666666666666,
+    "presisi": 0.45121951219512196,
+    "recall": 0.8222222222222222,
+    "f1": 0.5826771653543307,
+    "biaya": 170.0,
+    "biaya_pada_05": 190.0,
+    "biaya_loloskan_semua": 450.0,
+    "tn": 120,
+    "fp": 90,
+    "fn": 16,
+    "tp": 74
+  },
+  "ahp": {
+    "bobot": {
+      "C1": 0.288721,
+      "C2": 0.16657,
+      "C3": 0.101154,
+      "C4": 0.102462,
+      "C5": 0.284243,
+      "C6": 0.05685
+    },
+    "lambda_max": 6.022021654474031,
+    "ci": 0.004404330894806208,
+    "cr": 0.003551879753875974,
+    "konsisten": true
+  },
+  "periode": {
+    "n_pemohon": 40,
+    "total_diajukan": 156100000.0,
+    "plafon": 60000000.0,
+    "total_dicairkan": 59350000.0,
+    "status": {
+      "DISETUJUI": 18,
+      "DITUNDA": 16,
+      "DITOLAK": 6
+    },
+    "korelasi_iks_pd": -0.07652112398905016
+  },
+  "korelasi_metode": {
+    "rank_TOPSIS": {
+      "rank_TOPSIS": 1.0,
+      "rank_SAW": 0.9572,
+      "rank_VIKOR": 0.8503
+    },
+    "rank_SAW": {
+      "rank_TOPSIS": 0.9572,
+      "rank_SAW": 1.0,
+      "rank_VIKOR": 0.9403
+    },
+    "rank_VIKOR": {
+      "rank_TOPSIS": 0.8503,
+      "rank_SAW": 0.9403,
+      "rank_VIKOR": 1.0
+    }
+  },
+  "perbandingan_kebijakan": {
+    "SPK Hybrid (AHP+TOPSIS)": {
+      "n_penerima": 18.0,
+      "dana_terpakai": 59350000.0,
+      "utilisasi": 98.9167,
+      "tingkat_macet": 0.0,
+      "iks_rata2": 5.3889,
+      "pd_rata2": 0.2714,
+      "kerugian": 0.0,
+      "penurunan_macet_vs_undian_%": 100.0,
+      "selisih_iks_vs_undian": 0.362
+    },
+    "Hanya Risiko (PD terkecil)": {
+      "n_penerima": 18.0,
+      "dana_terpakai": 59450000.0,
+      "utilisasi": 99.0833,
+      "tingkat_macet": 0.0556,
+      "iks_rata2": 5.2778,
+      "pd_rata2": 0.2526,
+      "kerugian": 5.0,
+      "penurunan_macet_vs_undian_%": 72.6,
+      "selisih_iks_vs_undian": 0.251
+    },
+    "Hanya Kebutuhan (IKS terbesar)": {
+      "n_penerima": 20.0,
+      "dana_terpakai": 59450000.0,
+      "utilisasi": 99.0833,
+      "tingkat_macet": 0.2,
+      "iks_rata2": 5.95,
+      "pd_rata2": 0.3238,
+      "kerugian": 20.0,
+      "penurunan_macet_vs_undian_%": 1.4,
+      "selisih_iks_vs_undian": 0.923
+    },
+    "Siapa Cepat (FCFS)": {
+      "n_penerima": 23.0,
+      "dana_terpakai": 59800000.0,
+      "utilisasi": 99.6667,
+      "tingkat_macet": 0.2174,
+      "iks_rata2": 5.2174,
+      "pd_rata2": 0.3705,
+      "kerugian": 25.0,
+      "penurunan_macet_vs_undian_%": -7.2,
+      "selisih_iks_vs_undian": 0.19
+    },
+    "Undian (rata-rata 2000x)": {
+      "n_penerima": 19.066,
+      "dana_terpakai": 59552425.0,
+      "utilisasi": 99.254,
+      "tingkat_macet": 0.2028,
+      "iks_rata2": 5.0271,
+      "pd_rata2": 0.3567,
+      "kerugian": 19.345,
+      "penurunan_macet_vs_undian_%": 0.0,
+      "selisih_iks_vs_undian": 0.0
+    }
+  },
+  "what_if": {
+    "id_pemohon": "P0039",
+    "skor_sebelum": 0.4968780735851227,
+    "skor_sesudah": 0.5591418071569658,
+    "peringkat_sebelum": 15,
+    "peringkat_sesudah": 8,
+    "delta_peringkat": 7,
+    "alternatif_lain_bergeser": 7
+  },
+  "goal_seeking": {
+    "id_pemohon": "P0039",
+    "kriteria": "C5",
+    "nilai_awal": 0.3856055617633905,
+    "nilai_dibutuhkan": null,
+    "selisih": null,
+    "peringkat_target": 5,
+    "peringkat_tercapai": null,
+    "tercapai": false,
+    "catatan": "Peringkat target tidak tercapai walau kriteria ini didorong ke nilai ekstrem. Kelemahan pemohon terletak pada kriteria lain."
+  },
+  "uji_signifikansi": {
+    "n_penerima": 18,
+    "macet_teramati": 0,
+    "laju_dasar": 0.25,
+    "macet_diharapkan_jika_acak": 4.5,
+    "p_value": 0.005637710113660436,
+    "signifikan_5persen": true,
+    "signifikan_1persen": true
+  },
+  "eksternal": {
+    "garis_kemiskinan_jateng": 596676,
+    "umk_surakarta": 2570000,
+    "anggota_rt_miskin": 4.31
+  },
+  "ahp_per_responden": {
+    "R1_Manajer": {
+      "C1": 0.2982,
+      "C2": 0.1706,
+      "C3": 0.1053,
+      "C4": 0.0978,
+      "C5": 0.2714,
+      "C6": 0.0566,
+      "CR": 0.0077
+    },
+    "R2_Ketua": {
+      "C1": 0.3665,
+      "C2": 0.1369,
+      "C3": 0.0812,
+      "C4": 0.1278,
+      "C5": 0.2321,
+      "C6": 0.0555,
+      "CR": 0.0122
+    },
+    "R3_Analis": {
+      "C1": 0.2103,
+      "C2": 0.1875,
+      "C3": 0.1168,
+      "C4": 0.083,
+      "C5": 0.3465,
+      "C6": 0.056,
+      "CR": 0.0118
+    },
+    "GABUNGAN (geometrik)": {
+      "C1": 0.2887,
+      "C2": 0.1666,
+      "C3": 0.1012,
+      "C4": 0.1025,
+      "C5": 0.2842,
+      "C6": 0.0568,
+      "CR": 0.0036
+    }
+  },
+  "heuristic_evaluation": {
+    "n_temuan": 10,
+    "n_evaluator": 3,
+    "heuristik_terlanggar": [
+      "H1",
+      "H10",
+      "H2",
+      "H3",
+      "H4",
+      "H5",
+      "H6",
+      "H7",
+      "H9"
+    ],
+    "sebaran_keparahan": {
+      "4 Bencana, wajib diperbaiki sebelum rilis": 2,
+      "3 Mayor, prioritas tinggi": 4,
+      "2 Minor, prioritas rendah": 3,
+      "1 Kosmetik, perbaiki bila ada waktu": 1
+    },
+    "wajib_diperbaiki": [
+      "HE-03",
+      "HE-08"
+    ],
+    "prioritas_tinggi": [
+      "HE-01",
+      "HE-02",
+      "HE-06",
+      "HE-07"
+    ],
+    "sudah_diperbaiki": [
+      "HE-01",
+      "HE-03",
+      "HE-08"
+    ],
+    "masih_terbuka": [
+      "HE-04",
+      "HE-05",
+      "HE-06",
+      "HE-07",
+      "HE-09",
+      "HE-10"
+    ]
+  }
+}
