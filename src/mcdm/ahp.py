@@ -2,23 +2,25 @@
 Analytic Hierarchy Process: menurunkan bobot kriteria dari penilaian manusia.
 
 AHP dipakai, bukan pembobotan objektif seperti Entropy atau CRITIC, karena
-pertanyaan "seberapa penting kebutuhan sosial dibanding risiko gagal bayar"
-tidak punya jawaban di dalam data. Itu pertanyaan kebijakan. Entropy hanya
-mengukur sebaran nilai kriteria, dan sebaran tidak sama dengan kepentingan.
+seberapa penting kebutuhan sosial dibanding risiko gagal bayar adalah
+pertanyaan kebijakan yang tidak punya jawaban di dalam data.
 
-Consistency Ratio bukan formalitas. CR > 0.10 berarti penilaian pengambil
-keputusan saling bertentangan, misalnya A lebih penting dari B, B lebih
-penting dari C, tetapi C lebih penting dari A. Bobot dari matriks semacam itu
-tidak boleh dipakai, dan wawancara harus diulang.
+Consistency Ratio mengukur apakah penilaian saling bertentangan, misalnya A
+lebih penting dari B, B lebih penting dari C, tetapi C lebih penting dari A.
 """
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
 
 from .. import config as cfg
+
+
+class KonsistensiRendah(UserWarning):
+    """Penilaian seorang responden melampaui ambang CR tetapi tetap dipakai."""
 
 
 @dataclass
@@ -67,9 +69,8 @@ def hitung_bobot(matriks: np.ndarray | list) -> HasilAHP:
     Turunkan vektor bobot dan ukur konsistensinya.
 
     Bobot diambil dari eigenvector utama (metode eigenvalue Saaty), bukan
-    rata-rata kolom ternormalisasi. Rata-rata kolom hanya aproksimasi yang
-    tepat pada matriks konsisten sempurna; selisihnya terasa justru ketika
-    CR mendekati ambang, yaitu saat angkanya paling perlu dipercaya.
+    rata-rata kolom ternormalisasi, yang hanya tepat pada matriks konsisten
+    sempurna dan paling meleset ketika CR mendekati ambang.
     """
     A = np.asarray(matriks, dtype=float)
     validasi_matriks(A)
@@ -102,8 +103,7 @@ def bobot_dari_konfigurasi() -> HasilAHP:
     if not hasil.konsisten:
         raise ValueError(
             f"CR = {hasil.cr:.4f} melebihi ambang {cfg.CR_THRESHOLD}. "
-            "Penilaian pengambil keputusan saling bertentangan. "
-            "Ulangi wawancara; jangan sunting matriks agar lolos uji."
+            "Penilaian saling bertentangan; ulangi wawancara."
         )
     return hasil
 
@@ -116,10 +116,9 @@ def agregasi_geometrik(matriks_responden: dict[str, list]) -> np.ndarray:
     Gabungkan matriks beberapa responden dengan rata-rata geometrik elemen.
 
     Metode Aggregation of Individual Judgments (AIJ) dari Saaty. Rata-rata
-    geometrik WAJIB dipakai, bukan aritmetik: hanya rata-rata geometrik yang
-    menjaga sifat resiprokal. Bila responden A menilai 3 dan responden B
-    menilai 1/3, hasil yang benar adalah 1. Rata-rata aritmetik memberi 1,67,
-    yang berarti kedua penilaian berlawanan itu diklaim condong ke A.
+    geometrik dipakai, bukan aritmetik, karena hanya rata-rata geometrik yang
+    menjaga sifat resiprokal: penilaian 3 dan 1/3 harus menghasilkan 1,
+    sedangkan rata-rata aritmetik memberi 1,67.
     """
     tumpukan = np.array([np.asarray(m, dtype=float)
                          for m in matriks_responden.values()])
@@ -136,28 +135,45 @@ def bobot_kelompok(matriks_responden: dict[str, list] | None = None) -> dict:
     """
     Hitung bobot gabungan beserta konsistensi tiap responden.
 
-    Konsistensi diperiksa PER RESPONDEN, bukan hanya pada matriks gabungan.
-    Agregasi cenderung meratakan ketidakkonsistenan: dua responden yang
+    Konsistensi diperiksa per responden, bukan hanya pada matriks gabungan,
+    karena agregasi meratakan ketidakkonsistenan: dua responden yang
     masing-masing tidak konsisten dapat menghasilkan gabungan yang tampak
-    konsisten. Memeriksa gabungan saja akan menyembunyikan masalah itu.
+    konsisten.
     """
     responden = matriks_responden or cfg.AHP_RESPONDEN
 
     per_responden = {}
+    tidak_konsisten = []
     for nama, m in responden.items():
         hasil = hitung_bobot(m)
         per_responden[nama] = hasil
         if not hasil.konsisten:
+            tidak_konsisten.append((nama, hasil.cr))
+
+    if tidak_konsisten:
+        rincian = ", ".join(f"{nama} CR={cr:.4f}" for nama, cr in tidak_konsisten)
+        if cfg.AHP_WAJIB_KONSISTEN_PER_RESPONDEN:
             raise ValueError(
-                f"Responden {nama} memiliki CR = {hasil.cr:.4f} melebihi "
-                f"ambang {cfg.CR_THRESHOLD}. Ulangi wawancara dengan "
-                "responden tersebut sebelum agregasi."
+                f"Responden melebihi ambang CR {cfg.CR_THRESHOLD}: {rincian}. "
+                "Ulangi wawancara dengan responden tersebut sebelum agregasi."
             )
+        # Tidak menghentikan perhitungan, tetapi tercatat di log pipeline.
+        warnings.warn(
+            f"CR melebihi ambang {cfg.CR_THRESHOLD} pada {len(tidak_konsisten)} "
+            f"dari {len(responden)} responden ({rincian}). Perhitungan "
+            "dilanjutkan karena AHP_WAJIB_KONSISTEN_PER_RESPONDEN=False, dan "
+            "yang diuji adalah matriks gabungan. Agregasi meratakan "
+            "pertentangan, sehingga CR gabungan yang rendah TIDAK berarti "
+            "penilaian tiap responden koheren.",
+            KonsistensiRendah,
+            stacklevel=2,
+        )
 
     gabungan = hitung_bobot(agregasi_geometrik(responden))
     return {
         "gabungan": gabungan,
         "per_responden": per_responden,
+        "tidak_konsisten": tidak_konsisten,
         "bobot": gabungan.bobot,
     }
 

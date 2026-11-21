@@ -1,23 +1,15 @@
 """
-Validasi kualitas keputusan: bandingkan SPK dengan kebijakan alternatif.
+Bandingkan keputusan SPK dengan kebijakan alternatif di bawah plafon yang sama.
 
-Angka "tingkat macet 5 persen" tidak berarti apa-apa tanpa pembanding.
-Penguji berhak bertanya: apakah hasil itu lebih baik daripada undian? Lebih
-baik daripada sekadar mengurutkan menurut risiko?
-
-Lima kebijakan dibandingkan di bawah plafon yang sama persis:
-
-    1. SPK Hybrid        - AHP + TOPSIS atas enam kriteria (sistem ini)
+    1. SPK Hybrid        - AHP + TOPSIS atas enam kriteria
     2. Hanya Risiko      - urutkan menurut PD terkecil
     3. Hanya Kebutuhan   - urutkan menurut IKS terbesar
-    4. Siapa Cepat       - urutan kedatangan berkas (praktik lama)
+    4. Siapa Cepat       - urutan kedatangan berkas
     5. Undian            - acak, rata-rata atas banyak ulangan
 
-Dua hasil dilaporkan untuk tiap kebijakan: tingkat gagal bayar sebenarnya
-pada penerima (keberlanjutan finansial) dan rata-rata IKS penerima
-(ketepatan sasaran sosial). Kebijakan yang unggul pada keduanya sekaligus
-adalah kebijakan yang benar-benar lebih baik, bukan sekadar menggeser
-pertukaran dari satu sisi ke sisi lain.
+Dua hasil dilaporkan per kebijakan: tingkat gagal bayar penerima dan rata-rata
+IKS penerima. Kebijakan yang unggul pada keduanya sekaligus benar-benar lebih
+baik, bukan sekadar menggeser pertukaran dari satu sisi ke sisi lain.
 """
 
 from __future__ import annotations
@@ -151,7 +143,7 @@ def uji_signifikansi(df_keputusan: pd.DataFrame, tabel: pd.DataFrame) -> dict:
 
 
 def ringkas_perbandingan(tabel: pd.DataFrame) -> str:
-    """Susun ringkasan naratif untuk dibacakan saat demo."""
+    """Susun ringkasan naratif perbandingan kebijakan."""
     spk = tabel.loc["SPK Hybrid (AHP+TOPSIS)"]
     baris = [
         "PERBANDINGAN KEBIJACAN ALOKASI",

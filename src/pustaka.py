@@ -1,25 +1,12 @@
 """
 Validasi masalah lewat riset pustaka, pengganti studi lapangan.
 
-MENGAPA MODUL INI ADA
----------------------
-Rubrik Identifikasi Masalah menuntut masalah "relevan dengan realitas
-bisnis". Jalur paling kuat untuk membuktikannya adalah wawancara koperasi
-nyata. Bila itu tidak memungkinkan, jalur kedua yang sah adalah menunjukkan
-bahwa masalah tersebut TERUKUR dan TERDOKUMENTASI pada sumber terbitan.
+Tiap angka disertai sumber dan periode agar dapat diperiksa ulang; angka tanpa
+sumber jelas tidak dimasukkan.
 
-Modul ini menempuh jalur kedua. Setiap angka disertai sumber dan periode
-sehingga penguji dapat memeriksanya sendiri. Angka tanpa sumber yang jelas
-tidak dimasukkan.
-
-BATAS KEABSAHAN YANG HARUS DINYATAKAN
--------------------------------------
-Riset pustaka membuktikan masalahnya NYATA dan BESAR. Riset pustaka TIDAK
-membuktikan masalah itu persis seperti yang dihadapi satu koperasi tertentu.
-Klaim yang sah: "kredit macet dan salah sasaran adalah persoalan terukur
-pada koperasi simpan pinjam dan penyaluran bantuan di Indonesia". Klaim yang
-TIDAK sah: "koperasi mitra kami menghadapi persoalan ini". Tanpa wawancara,
-klaim kedua tidak punya dasar.
+Batas keabsahannya: riset pustaka membuktikan masalahnya terukur dan
+terdokumentasi pada koperasi simpan pinjam di Indonesia, bukan bahwa satu
+koperasi tertentu menghadapinya.
 """
 
 from __future__ import annotations

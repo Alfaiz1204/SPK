@@ -1,19 +1,12 @@
 """
-Subsistem Dialog: antarmuka web SPK Prioritisasi Penyaluran Kredit Mikro.
+Antarmuka web SPK Prioritisasi Penyaluran Kredit Mikro.
 
 Jalankan dari akar proyek:
     streamlit run app/app.py
 
-Antarmuka ini bukan sekadar penampil tabel. Tiga hal yang membuatnya layak
-disebut komponen Dialog pada paradigma DDM:
-
-  1. Bobot kriteria dapat diubah pengambil keputusan, dan seluruh peringkat
-     dihitung ulang seketika. Bobot hasil AHP adalah titik awal, bukan
-     ketetapan.
-  2. Setiap peringkat disertai alasan: kriteria mana yang mengangkat dan
-     mana yang menekan.
-  3. Setiap skenario dapat disimpan, sehingga keputusan masa lalu bisa
-     ditelusuri dan dibandingkan.
+Bobot kriteria dapat diubah dan seluruh peringkat dihitung ulang seketika,
+tiap peringkat disertai alasan, dan tiap skenario dapat disimpan untuk
+ditelusuri kembali.
 """
 
 from __future__ import annotations

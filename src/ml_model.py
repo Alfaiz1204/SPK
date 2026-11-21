@@ -1,36 +1,21 @@
 """
-Subsistem Model (bagian 1): model prediktif probabilitas gagal bayar.
+Model prediktif probabilitas gagal bayar, keluaran kriteria C5.
 
-Keluaran modul ini adalah satu angka per pemohon, yaitu PD (probability of
-default) pada rentang 0-1, yang masuk ke matriks keputusan MCDM sebagai
-kriteria C5 bertipe cost.
-
-PROTOKOL EVALUASI
------------------
-Data uji dipakai TEPAT SATU KALI, di akhir. Seluruh pemilihan dilakukan di
-dalam data latih memakai prediksi out-of-fold:
+Protokol evaluasi bebas kebocoran, data uji dipakai tepat satu kali di akhir:
 
     1. Pisahkan latih (70%) dan uji (30%), terstratifikasi.
     2. Pilih keluarga model dengan AUC validasi silang 5-lipat pada data latih.
-    3. Pilih ambang keputusan dari prediksi out-of-fold data latih, dengan
-       meminimalkan biaya yang diharapkan menurut cost matrix dataset.
+    3. Pilih ambang dari prediksi out-of-fold data latih, meminimalkan biaya
+       menurut cost matrix dataset.
     4. Latih ulang model terpilih pada seluruh data latih.
     5. Evaluasi sekali pada data uji.
 
-Memilih ambang langsung pada data uji membuat metrik yang dilaporkan terlalu
-optimistis. Kesalahan ini tidak terlihat pada keluaran program, hanya terlihat
-pada urutan pemanggilan fungsi.
+Memilih ambang langsung pada data uji membuat metrik terlalu optimistis, dan
+kesalahan itu hanya terlihat dari urutan pemanggilan fungsi.
 
-DUA KEPUTUSAN DESAIN
---------------------
-1. Ambang TIDAK ditetapkan 0.5. Dataset menyertakan cost matrix yang
-   menyatakan meloloskan pemohon macet 5x lebih mahal daripada menolak
-   pemohon lancar. Pada komposisi kelas 70:30, akurasi tinggi bisa dicapai
-   dengan selalu menebak "lancar", dan model semacam itu tidak berguna.
-
-2. PD dipakai sebagai nilai kontinu di dalam MCDM, bukan label biner.
-   Mengubahnya menjadi lolos/tolak lebih dahulu membuang gradasi yang justru
-   dibutuhkan pada tahap pemeringkatan.
+Ambang tidak ditetapkan 0,5 karena cost matrix dataset tidak simetris. PD
+dipakai sebagai nilai kontinu di dalam MCDM, bukan label biner, agar gradasi
+yang dibutuhkan tahap pemeringkatan tidak terbuang.
 """
 
 from __future__ import annotations

@@ -1,38 +1,15 @@
 """
 Pelokalan berkas pengajuan ke konteks Kota Surakarta.
 
-MASALAH YANG DISELESAIKAN
--------------------------
-Basis data historis angsuran yang tersedia publik berdenominasi Deutsche Mark
-dan berasal dari Jerman. Model risiko dapat dilatih di atasnya, tetapi berkas
-pengajuan yang diputuskan koperasi berdenominasi Rupiah dengan besaran yang
-sama sekali berbeda. Dua ruang nilai ini harus dihubungkan secara eksplisit,
-bukan dengan mengalikan kurs.
+Basis data historis berdenominasi Deutsche Mark, sedangkan keputusan koperasi
+berdenominasi Rupiah. Keduanya dihubungkan lewat pemetaan kuantil: nilai
+diterjemahkan menurut posisi relatifnya pada sebaran, bukan dikalikan kurs.
 
-METODE: PEMETAAN KUANTIL (quantile mapping)
--------------------------------------------
-Nilai pinjaman diterjemahkan berdasarkan POSISI RELATIFNYA, bukan nominalnya.
-Pinjaman yang berada pada persentil ke-60 sebaran historis dipetakan ke
-persentil ke-60 sebaran pinjaman koperasi di Surakarta.
+Metode ini mengasumsikan struktur risiko bersifat ordinal, dan asumsi itu tidak
+dapat diuji tanpa data angsuran koperasi Indonesia yang berlabel. Karena itu PD
+yang dihasilkan sahih sebagai peringkat risiko relatif, bukan peluang absolut.
 
-Asumsi yang dipikul metode ini, dan harus dinyatakan terbuka:
-
-  (a) Struktur risiko bersifat ORDINAL. Pemohon yang meminjam relatif besar
-      terhadap sebaran kelompoknya menanggung risiko lebih tinggi, terlepas
-      dari mata uang dan negaranya.
-  (b) Asumsi (a) TIDAK dapat diuji dengan data yang tersedia. Pengujiannya
-      membutuhkan data angsuran koperasi Indonesia yang berlabel lancar atau
-      macet, dan data itu belum ada pada prototipe ini.
-
-Konsekuensinya, probabilitas gagal bayar yang dihasilkan harus dibaca sebagai
-SKOR RISIKO RELATIF untuk mengurutkan pemohon, bukan sebagai taksiran peluang
-absolut. Menyebutnya "peluang 38 persen gagal bayar" kepada pengurus koperasi
-akan menyesatkan. Menyebutnya "pemohon ini lebih berisiko daripada 70 persen
-pemohon lain" sudah tepat.
-
-Atribut selain nilai pinjaman, yaitu seluruh atribut kategorik, usia, tenor,
-jumlah tanggungan, dan lama domisili, berpindah apa adanya karena satuannya
-memang universal.
+Atribut selain nilai pinjaman berpindah apa adanya karena satuannya universal.
 """
 
 from __future__ import annotations
@@ -53,9 +30,8 @@ from . import eksternal as ext
 # dari pinjaman darurat sekitar satu juta rupiah sampai modal usaha sekitar
 # lima belas juta rupiah.
 #
-# PENTING: sebaran ini adalah ASUMSI PRODUK, bukan statistik terukur. Ganti
-# dengan sebaran plafon sesungguhnya begitu data koperasi mitra tersedia.
-# Fungsi `pasang_sebaran_rujukan()` disediakan khusus untuk itu.
+# Sebaran ini asumsi produk, bukan statistik terukur. Ganti lewat
+# pasang_sebaran_rujukan() begitu data plafon koperasi mitra tersedia.
 KELIPATAN_UMK_MIN = 0.4
 KELIPATAN_UMK_MAKS = 6.0
 

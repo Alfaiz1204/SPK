@@ -1,11 +1,9 @@
 """
 Metode pemeringkatan multikriteria: TOPSIS, SAW, dan VIKOR.
 
-Tiga metode disediakan bukan untuk menambah fitur, melainkan untuk menguji
-ketahanan hasil. Bila peringkat teratas berubah drastis ketika metode
-diganti padahal data dan bobotnya sama, peringkat itu artefak metode, bukan
-kesimpulan tentang pemohon. Perbandingan lintas metode adalah bentuk validasi
-yang paling murah dan paling sering dilewatkan.
+Tiga metode disediakan untuk menguji ketahanan hasil. Bila peringkat teratas
+berubah drastis ketika metode diganti padahal data dan bobotnya sama, peringkat
+itu artefak metode, bukan kesimpulan tentang pemohon.
 
 Konvensi seluruh fungsi:
     matriks : ndarray (m alternatif x n kriteria), nilai mentah

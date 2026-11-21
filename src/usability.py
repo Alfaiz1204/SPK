@@ -1,30 +1,16 @@
 """
 Evaluasi kemudahan penggunaan: Heuristic Evaluation dan System Usability Scale.
 
-Memenuhi Tugas 2(b), yaitu "melakukan evaluasi rancangan SPK pada aspek
-kemudahan penggunaan".
+Heuristic Evaluation (Nielsen) menemukan masalah: evaluator menelusuri
+antarmuka terhadap 10 heuristik dan mencatat pelanggaran beserta keparahannya,
+tanpa membutuhkan responden. SUS (Brooke) mengukur persepsi lewat 10 pernyataan
+menjadi satu skor 0-100 yang dapat dibandingkan lintas sistem. HE menjawab apa
+yang salah, SUS menjawab seberapa buruk rasanya bagi pengguna.
 
-DUA METODE, DUA PERAN BERBEDA
------------------------------
-Heuristic Evaluation (Nielsen) menemukan MASALAH. Evaluator menelusuri
-antarmuka terhadap 10 heuristik dan mencatat pelanggaran beserta tingkat
-keparahannya. Tidak membutuhkan responden, sehingga dapat dijalankan tim
-pengembang sendiri.
-
-System Usability Scale (Brooke) mengukur PERSEPSI. Sepuluh pernyataan
-menghasilkan satu skor 0-100 yang dapat dibandingkan lintas sistem.
-Membutuhkan responden, meski cukup 5 sampai 10 orang.
-
-Keduanya saling melengkapi dan tidak saling menggantikan. HE menjawab "apa
-yang salah"; SUS menjawab "seberapa buruk rasanya bagi pengguna".
-
-BIAS YANG WAJIB DIAKUI
-----------------------
-Evaluasi heuristik di bawah dikerjakan oleh tim pengembang sistem itu
-sendiri. Evaluator yang menilai karyanya sendiri cenderung melewatkan
-masalah yang sudah terbiasa ia hadapi. Temuan ini karenanya berstatus
-EVALUASI AWAL, bukan pengganti pengujian dengan pengguna nyata. Nielsen
-menganjurkan 3 sampai 5 evaluator independen; di sini tersedia 3 anggota tim.
+Evaluasi heuristik di bawah dikerjakan tim pengembang sendiri, sehingga
+berstatus evaluasi awal, bukan pengganti pengujian dengan pengguna nyata.
+Nielsen menganjurkan 3 sampai 5 evaluator independen; di sini tersedia 3
+anggota tim.
 """
 
 from __future__ import annotations

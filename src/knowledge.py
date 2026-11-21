@@ -1,14 +1,10 @@
 """
-Subsistem Pengetahuan (Knowledge-Based Subsystem).
+Aturan yang ditetapkan manusia, bukan dipelajari dari data.
 
-Memuat aturan yang DITETAPKAN, bukan dipelajari dari data:
-  1. Indeks Kebutuhan Sosial  - adaptasi 14 kriteria rumah tangga miskin BPS
-  2. Skor dampak produktif    - skala prioritas pengelola koperasi
-  3. Skor riwayat kredit      - penilaian pakar, lalu dikalibrasi ulang ke data
-
-Memisahkan modul ini dari model statistik membuat satu hal terlihat jelas pada
-saat demo: bagian mana dari keputusan yang berasal dari kebijakan manusia, dan
-bagian mana yang berasal dari pola data.
+Memuat Indeks Kebutuhan Sosial (adaptasi kriteria BPS), skor dampak produktif
+(kebijakan pengelola), dan skor riwayat kredit (dikalibrasi ke data latih).
+Dipisahkan dari ml_model.py agar batas antara kebijakan dan pola data terlihat
+pada tingkat berkas.
 """
 
 from __future__ import annotations
@@ -25,10 +21,8 @@ def terapkan_aturan_iks(df: pd.DataFrame) -> pd.DataFrame:
     """
     Hasilkan satu kolom biner per indikator deprivasi, lalu jumlahkan.
 
-    Kolom per indikator sengaja dipertahankan agar antarmuka bisa menjawab
-    "mengapa pemohon ini mendapat IKS 7?" dengan menyebut indikator mana yang
-    terpenuhi. Skor tanpa penjelasan tidak bisa dipertanggungjawabkan kepada
-    pemohon yang pengajuannya ditolak.
+    Kolom per indikator dipertahankan agar antarmuka dapat menyebut indikator
+    mana yang menyusun skor seorang pemohon.
     """
     df = df.copy()
     for nama_indikator, (kolom, kode_deprivasi) in cfg.IKS_RULES.items():
@@ -54,8 +48,8 @@ def kalibrasi_skor_riwayat(df_latih: pd.DataFrame) -> dict[str, int]:
     """
     Turunkan skor riwayat kredit dari tingkat gagal bayar yang teramati.
 
-    PENTING: hanya boleh menerima data latih. Memanggil fungsi ini dengan data
-    uji menimbulkan kebocoran target, dan metrik evaluasi menjadi tidak sah.
+    Hanya boleh menerima data latih: memakai data uji membocorkan target dan
+    membuat metrik evaluasi tidak sah.
 
     Kode dengan tingkat macet terendah memperoleh skor 4, tertinggi skor 0.
     """

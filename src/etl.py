@@ -1,9 +1,9 @@
 """
-Subsistem Data (bagian 1): ekstraksi, validasi, pembersihan, transformasi.
+Ekstraksi, validasi, pembersihan, dan transformasi data mentah.
 
-Setiap fungsi mengembalikan DataFrame baru dan mencatat apa yang diubah ke
-dalam objek ETLReport. Laporan ini dipakai di bab Kualitas Data; tanpa jejak
-tertulis, klaim "data sudah dibersihkan" tidak bisa diverifikasi penguji.
+Setiap tahap mencatat apa yang diubah ke ETLReport. Laporan itu yang dipakai
+di bab Kualitas Data; tanpa jejak tertulis klaim "data sudah dibersihkan"
+tidak bisa diverifikasi.
 """
 
 from __future__ import annotations
@@ -88,9 +88,8 @@ def validasi(df: pd.DataFrame, report: ETLReport) -> pd.DataFrame:
     missing = df.isna().sum()
     report.missing_ditemukan = {k: int(v) for k, v in missing.items() if v > 0}
 
-    # 2. Kode kategorik di luar kamus. Dataset ini seharusnya bersih;
-    #    pemeriksaan tetap dijalankan agar pipeline gagal cepat kalau
-    #    sumber data diganti dengan versi lain.
+    # 2. Kode kategorik di luar kamus. Temuan dicatat ke laporan, tidak
+    #    menghentikan pipeline.
     for kolom, kamus in cfg.CODE_LABELS.items():
         asing = set(df[kolom].unique()) - set(kamus.keys())
         if asing:
@@ -120,10 +119,9 @@ def bersihkan(df: pd.DataFrame, report: ETLReport) -> pd.DataFrame:
     df = df.drop_duplicates()
     report.duplikat_dibuang = sebelum - len(df)
 
-    # Winsorize pada persentil 1 dan 99 untuk kolom bernilai uang / durasi.
-    # Nilai TIDAK dibuang: baris pemohon berjumlah besar tetap relevan secara
-    # bisnis. Yang diredam hanya pengaruhnya terhadap normalisasi TOPSIS,
-    # yang sensitif pada nilai ekstrem.
+    # Winsorize pada persentil 1 dan 99. Nilai ekstrem diredam, barisnya tidak
+    # dibuang, karena normalisasi TOPSIS peka terhadap pencilan sementara
+    # pemohon bernilai besar tetap sah dinilai.
     for kolom in ["jumlah_kredit", "durasi_bulan"]:
         lo, hi = df[kolom].quantile([0.01, 0.99])
         terdampak = int(((df[kolom] < lo) | (df[kolom] > hi)).sum())
@@ -137,10 +135,9 @@ def bersihkan(df: pd.DataFrame, report: ETLReport) -> pd.DataFrame:
 # --------------------------------------------------------------------------
 # TRANSFORM
 #
-# Catatan arsitektur: skor riwayat kredit (C3) TIDAK dihitung di sini.
-# Skor itu dikalibrasi dari tingkat gagal bayar pada data latih, sehingga
-# baru boleh dihitung setelah pemisahan latih/uji. Menghitungnya di tahap ETL
-# akan membocorkan informasi target ke data uji.
+# Skor riwayat kredit (C3) tidak dihitung di sini: skornya dikalibrasi dari
+# tingkat gagal bayar data latih, sehingga menghitungnya pada tahap ETL akan
+# membocorkan target ke data uji.
 # --------------------------------------------------------------------------
 def tambah_label_terbaca(df: pd.DataFrame) -> pd.DataFrame:
     """Tambahkan kolom *_label untuk keperluan antarmuka."""

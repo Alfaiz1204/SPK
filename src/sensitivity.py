@@ -1,17 +1,12 @@
 """
-Subsistem Model (bagian 3): analisis sensitivitas, what-if, dan goal seeking.
+Analisis sensitivitas, what-if, dan goal seeking.
 
-Modul inilah yang memisahkan Sistem Pendukung Keputusan dari kalkulator
-peringkat. Kalkulator menjawab "siapa yang menang". SPK menjawab "seberapa
-kuat kemenangan itu, dan apa yang harus berubah agar hasilnya berbeda".
-
-Tiga kapabilitas yang disediakan:
     1. analisis_sensitivitas_bobot  - satu bobot divariasikan, sisanya
                                       diskalakan proporsional
     2. what_if_pemohon              - ubah atribut satu pemohon, lihat
                                       dampaknya pada peringkat
-    3. goal_seeking                 - cari nilai kriteria minimum agar
-                                      pemohon mencapai peringkat target
+    3. goal_seeking                 - cari nilai kriteria minimum agar pemohon
+                                      mencapai peringkat target
 """
 
 from __future__ import annotations

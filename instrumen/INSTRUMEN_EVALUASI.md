@@ -6,9 +6,12 @@ pada aspek kemudahan penggunaan"*.
 Instrumen 1 sudah **dikerjakan** dan hasilnya ada di `src/usability.py`.
 Instrumen 2 **perlu Anda sebar** — 30 menit, 5 teman sekelas, di ruang kelas.
 
-> Wawancara pembobotan AHP sengaja tidak disertakan. Rubrik Pemodelan hanya
-> menuntut "pembobotan menggunakan metode tertentu", dan AHP dengan CR 0,0036
-> plus agregasi tiga responden sudah memenuhinya tanpa data lapangan.
+> Instrumen wawancara pembobotan AHP ada di berkas terpisah:
+> [INSTRUMEN_WAWANCARA_AHP.md](INSTRUMEN_WAWANCARA_AHP.md). Instrumen itu
+> **belum dijalankan** — matriks `AHP_RESPONDEN` pada `src/config.py` masih
+> berisi penilaian rekaan. Rubrik Pemodelan hanya menuntut "pembobotan
+> menggunakan metode tertentu", dan metode AHP-nya sendiri sudah terpenuhi;
+> yang belum ada adalah data respondennya.
 
 ---
 

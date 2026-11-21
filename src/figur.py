@@ -31,7 +31,10 @@ plt.rcParams.update({
 
 
 def gambar_bobot_ahp() -> None:
-    hasil = ahp.bobot_dari_konfigurasi()
+    # Bobot gabungan tiga responden, sama dengan yang dipakai pipeline.
+    # Memakai bobot_dari_konfigurasi() di sini akan menggambar penilaian
+    # SATU responden, sehingga gambar dan teks laporan berbeda angka.
+    hasil = ahp.bobot_kelompok()["gabungan"]
     # Nama kriteria dipendekkan agar label sumbu tidak saling menimpa.
     pendek = {
         "C1": "Kebutuhan\nSosial", "C2": "Kapasitas\nAngsur",
@@ -175,7 +178,7 @@ def gambar_sensitivitas() -> None:
         ax.plot(sub["bobot"], sub["peringkat"], marker="o", ms=3.2, lw=1.4,
                 color=peta_warna[i], label=pid)
 
-    bobot_awal = ahp.bobot_dari_konfigurasi().bobot[cfg.CRITERIA_CODES.index("C1")]
+    bobot_awal = ahp.bobot_kelompok()["gabungan"].bobot[cfg.CRITERIA_CODES.index("C1")]
     ax.axvline(bobot_awal, color="#34495e", ls="--", lw=1.2)
     ax.text(bobot_awal + 0.006, 2, f"Bobot hasil AHP\n{bobot_awal:.3f}", fontsize=8)
 
